@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	result, err := roller.RollDice("2d6")
+	result, err := roller.RollDiceString("2d6")
 	if err == nil {
 		fmt.Println(result)
 	} else {
