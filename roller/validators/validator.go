@@ -12,25 +12,25 @@ func RollValidator(rollString string) error {
 	}
 
 	//check for invalid characters
-	reInvalid := regexp.MustCompile(`[^0-9d+-/*!]`)
+	reInvalid := regexp.MustCompile(`[^0-9d\+\-\*/!]`)
 	if reInvalid.MatchString(rollString) {
 		return errors.New("Invalid characters")
 	}
 
 	//check for trailing operands
-	reTrailing := regexp.MustCompile(`[+-/*]$`)
+	reTrailing := regexp.MustCompile(`[\+\-\*/]$`)
 	if reTrailing.MatchString(rollString) {
 		return errors.New("Trailing operand")
 	}
 
 	//check for preceding operands
-	rePreceding := regexp.MustCompile(`^[+-/*!]`)
+	rePreceding := regexp.MustCompile(`^[\+\-\*/!]`)
 	if rePreceding.MatchString(rollString) {
 		return errors.New("Preceding operand")
 	}
 
 	//check for invalid consecutive operands
-	reConsecutive := regexp.MustCompile(`[+-/*!]{2,}`)
+	reConsecutive := regexp.MustCompile(`[\+\-\*/!]{2,}`)
 	if reConsecutive.MatchString(rollString) {
 		return errors.New("Consecutive operands")
 	}
@@ -54,7 +54,7 @@ func RollValidator(rollString string) error {
 	}
 
 	//check for d's with following or preceding operands
-	reDOperand := regexp.MustCompile(`[+-/*!]d[+-/*!]`)
+	reDOperand := regexp.MustCompile(`[\+\-\*/!]d[\+\-\*/!]`)
 	if reDOperand.MatchString(rollString) {
 		return errors.New("d with following or preceding operand")
 	}
