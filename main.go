@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"godice/roller"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	result := roller.Roll(6)
+	fmt.Println("Result:", result)
 }
