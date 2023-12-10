@@ -35,5 +35,29 @@ func RollValidator(rollString string) error {
 		return errors.New("Consecutive operands")
 	}
 
+	//check for consecutive d's
+	reConsecutiveD := regexp.MustCompile(`dd`)
+	if reConsecutiveD.MatchString(rollString) {
+		return errors.New("Consecutive d's")
+	}
+
+	//check for trailing d's
+	reTrailingD := regexp.MustCompile(`d$`)
+	if reTrailingD.MatchString(rollString) {
+		return errors.New("Trailing d")
+	}
+
+	//check for preceding d's
+	rePrecedingD := regexp.MustCompile(`^d`)
+	if rePrecedingD.MatchString(rollString) {
+		return errors.New("Preceding d")
+	}
+
+	//check for d's with following or preceding operands
+	reDOperand := regexp.MustCompile(`[+-/*!]d[+-/*!]`)
+	if reDOperand.MatchString(rollString) {
+		return errors.New("d with following or preceding operand")
+	}
+
 	return nil
 }
