@@ -12,7 +12,7 @@ func RollValidator(rollString string) error {
 	}
 
 	//check for invalid characters
-	reInvalid := regexp.MustCompile(`[^0-9d\+\-\*/!]`)
+	reInvalid := regexp.MustCompile(`[^0-9d\+\-\*/! ]`)
 	if reInvalid.MatchString(rollString) {
 		return errors.New("Invalid characters")
 	}
@@ -30,7 +30,7 @@ func RollValidator(rollString string) error {
 	}
 
 	//check for invalid consecutive operands
-	reConsecutive := regexp.MustCompile(`[\+\-\*/!]{2,}`)
+	reConsecutive := regexp.MustCompile(`[\+\-\*/]{2,}`)
 	if reConsecutive.MatchString(rollString) {
 		return errors.New("Consecutive operands")
 	}

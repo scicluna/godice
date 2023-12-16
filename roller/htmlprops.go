@@ -6,8 +6,9 @@ type DiceRoll struct {
 }
 
 type DiceSet struct {
-	rolls []DiceRoll
-	total int
+	rolls   []DiceRoll
+	total   int
+	special string // "!", or ""
 }
 
 type RollResult struct {
@@ -16,7 +17,7 @@ type RollResult struct {
 	grandtotal int
 }
 
-func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operands []string, grandTotal int) RollResult {
+func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operands []string, specials []string, grandTotal int) RollResult {
 	/*
 		If grouped Results are [ [ [1,2,3] ], [[1,2,3],[5,6]]]
 		Then we need to have a struct array that shows [{total: 5, dicesets: [[{val:1, min}, {val:2, med}, {val: 3, med}]]}, {total: 16, dicesets:[[{val:1, min}, {val:2, med}, {val: 3, med}], [{val:5, med}, {val:6, max}]] or something like that. what
@@ -28,6 +29,7 @@ func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operand
 		var minRoll = 1
 		var maxRoll = sizes[i]
 		diceSet.total = totals[i]
+		diceSet.special = specials[i]
 
 		if i == len(operands) {
 			operandSets = append(operandSets, "")
@@ -58,7 +60,7 @@ func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operand
 	}
 	return RollResult{
 		sets:       diceSets,
-		grandtotal: grandTotal,
 		operands:   operandSets,
+		grandtotal: grandTotal,
 	}
 }
