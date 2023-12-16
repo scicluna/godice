@@ -15,13 +15,15 @@ func main() {
 
 	diceString, err := reader.ReadString('\n')
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error reading input:", err)
+		return
 	}
 
 	result, err := roller.RollDiceString(strings.TrimSpace(diceString))
-	if err == nil {
-		fmt.Println(result)
-	} else {
-		fmt.Println(err)
+	if err != nil {
+		fmt.Println("Error rolling dice:", err)
+		return
 	}
+
+	fmt.Println("Result:", result)
 }

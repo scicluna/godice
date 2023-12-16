@@ -8,60 +8,79 @@ import (
 	"strings"
 )
 
-func RollDiceString(rollString string) (string, error) {
+func RollDiceString(rollString string) (*RollResult, error) {
 	dicePairs, operands, parseErr := parseRollString(rollString)
 
 	if parseErr != nil {
-		return "", parseErr
+		return nil, parseErr
 	}
 
 	sizes, quantities, specials := parseDicePairs(dicePairs)
 
-	//create results array and populate it with the results of each roll
-	var results [][]int
+	// Create results array and populate it with the results of each roll
+	var groupedResults [][][]int
 	for i := 0; i < len(sizes); i++ {
 		rollResult := rollSet(sizes[i], quantities[i], specials[i])
-		results = append(results, rollResult)
+		groupedResults = append(groupedResults, rollResult)
 	}
 
-	//use the operands to combine the results into a total
-	var total []int
-	for _, result := range results {
+	// Use the operands to combine the results into a total
+	var totals []int
+	for _, groupResult := range groupedResults {
 		setTotal := 0
-		for _, roll := range result {
-			setTotal += roll
+		for _, result := range groupResult {
+			setTotal += sumRolls(result)
 		}
-		total = append(total, setTotal)
+		totals = append(totals, setTotal)
 	}
 
 	var grandTotal int
-	//if there are no operands, just return the result
-	grandTotal += total[0]
+	if len(operands) == 0 {
+		// If there are no operands, just sum up all totals
+		grandTotal = sumRolls(totals)
+	} else {
+		// Otherwise, combine the results using the operands
+		grandTotal = totals[0] // Start with the first total
+		resultIndex := 1       // Start with the second element in totals for operands
 
-	//otherwise, combine the results using the operands
-	for i := 0; i < len(operands); i++ {
-		switch operands[i] {
-		case "+":
-			grandTotal += total[i+1]
-		case "-":
-			grandTotal -= total[i+1]
-		case "*":
-			grandTotal *= total[i+1]
-		case "/":
-			if total[i+1] != 0 {
-				grandTotal /= total[i+1]
+		for _, operand := range operands {
+			if resultIndex >= len(totals) {
+				break // Safety check
 			}
+
+			switch operand {
+			case "+":
+				grandTotal += totals[resultIndex]
+			case "-":
+				grandTotal -= totals[resultIndex]
+			case "*":
+				grandTotal *= totals[resultIndex]
+			case "/":
+				if totals[resultIndex] != 0 {
+					grandTotal /= totals[resultIndex]
+				}
+			}
+			resultIndex++
 		}
 	}
 
-	//append all the results + the total to a string and return
-	resultString := buildString(total, results, operands, grandTotal)
-	return resultString, nil
+	// Append all the results + the total to a string and return
+	HTMLProps := buildHTMLProps(groupedResults, totals, sizes, grandTotal)
+	return &HTMLProps, nil
+}
+
+// Helper function to sum up a slice of integers
+func sumRolls(rolls []int) int {
+	total := 0
+	for _, roll := range rolls {
+		total += roll
+	}
+	return total
 }
 
 // given the size of a die, roll a single die and return the result
-func singleRoll(size int, special string) int {
-	var result int
+func singleRoll(size int, special string) []int {
+	var result []int
 	exploding := false
 
 	if special == "!" {
@@ -70,7 +89,7 @@ func singleRoll(size int, special string) int {
 
 	for {
 		roll := rand.Intn(size) + 1
-		result += roll
+		result = append(result, roll)
 
 		if roll == size && exploding {
 			continue
@@ -82,15 +101,15 @@ func singleRoll(size int, special string) int {
 	return result
 }
 
-func rollSet(size int, quantity int, special string) []int {
-	var rollResults []int
+func rollSet(size int, quantity int, special string) [][]int {
+	var rollResults [][]int
 	for i := 0; i < quantity; i++ {
 		if size != 0 {
 			rollResult := singleRoll(size, special)
 			rollResults = append(rollResults, rollResult)
 		} else {
 			// Handle simple modifiers as individual results
-			rollResults = append(rollResults, quantity)
+			rollResults = append(rollResults, []int{quantity})
 			break // No need to loop since it's not a dice roll
 		}
 	}
@@ -109,6 +128,7 @@ func parseRollString(rollString string) ([]string, []string, error) {
 	return dicePairs, operands, nil
 }
 
+// handles the parsing of dice pairs into sizes, quantities, and specials
 func parseDicePairs(dicePairs []string) ([]int, []int, []string) {
 	var sizes []int
 	var quantities []int
@@ -136,6 +156,7 @@ func parseDicePairs(dicePairs []string) ([]int, []int, []string) {
 	return sizes, quantities, specials
 }
 
+// looks for special characters to populate the specials array
 func specialParse(brokenPair []string) (string, []string) {
 	//check for exploding dice (!)
 	if strings.Contains(brokenPair[1], "!") && brokenPair[1] != "1" {
@@ -144,30 +165,4 @@ func specialParse(brokenPair []string) (string, []string) {
 	}
 
 	return "", brokenPair
-}
-
-func buildString(totals []int, rawTotals [][]int, operands []string, grandTotal int) string {
-	var resultString strings.Builder
-
-	for i, rawTotal := range rawTotals {
-		// Append the individual roll results for each set
-		resultString.WriteString("(")
-		for j, roll := range rawTotal {
-			resultString.WriteString(strconv.Itoa(roll))
-			if j < len(rawTotal)-1 {
-				resultString.WriteString(", ")
-			}
-		}
-		resultString.WriteString(")")
-
-		// Append the operand, if there is one
-		if i < len(operands) {
-			resultString.WriteString(" " + operands[i] + " ")
-		}
-	}
-
-	// Append the grand total at the enda
-	resultString.WriteString(" = " + strconv.Itoa(grandTotal))
-
-	return resultString.String()
 }
