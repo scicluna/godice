@@ -39,43 +39,12 @@ func RollDiceString(rollString string) (*RollResult, error) {
 		// If there are no operands, just sum up all totals
 		grandTotal = sumRolls(totals)
 	} else {
-		// Otherwise, combine the results using the operands
-		grandTotal = totals[0] // Start with the first total
-		resultIndex := 1       // Start with the second element in totals for operands
-
-		for _, operand := range operands {
-			if resultIndex >= len(totals) {
-				break // Safety check
-			}
-
-			switch operand {
-			case "+":
-				grandTotal += totals[resultIndex]
-			case "-":
-				grandTotal -= totals[resultIndex]
-			case "*":
-				grandTotal *= totals[resultIndex]
-			case "/":
-				if totals[resultIndex] != 0 {
-					grandTotal /= totals[resultIndex]
-				}
-			}
-			resultIndex++
-		}
+		grandTotal = calculateWithOrderOfOperations(totals, operands)
 	}
 
 	// Append all the results + the total to a string and return
-	HTMLProps := buildHTMLProps(groupedResults, totals, sizes, grandTotal)
+	HTMLProps := buildHTMLProps(groupedResults, totals, sizes, operands, grandTotal)
 	return &HTMLProps, nil
-}
-
-// Helper function to sum up a slice of integers
-func sumRolls(rolls []int) int {
-	total := 0
-	for _, roll := range rolls {
-		total += roll
-	}
-	return total
 }
 
 // given the size of a die, roll a single die and return the result
