@@ -1,20 +1,20 @@
 package roller
 
 type DiceRoll struct {
-	value    int
-	rollType string // "min", "med", or "max"
+	Value    int
+	RollType string // "min", "med", or "max"
 }
 
 type DiceSet struct {
-	rolls   []DiceRoll
-	total   int
-	special string // "!", or ""
+	Rolls   []DiceRoll
+	Total   int
+	Special string // "!", or ""
 }
 
 type RollResult struct {
-	operands   []string
-	sets       []DiceSet
-	grandtotal int
+	Operands   []string
+	Sets       []DiceSet
+	GrandTotal int
 }
 
 func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operands []string, specials []string, grandTotal int) RollResult {
@@ -28,8 +28,8 @@ func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operand
 		var diceSet DiceSet
 		var minRoll = 1
 		var maxRoll = sizes[i]
-		diceSet.total = totals[i]
-		diceSet.special = specials[i]
+		diceSet.Total = totals[i]
+		diceSet.Special = specials[i]
 
 		if i == len(operands) {
 			operandSets = append(operandSets, "")
@@ -49,18 +49,18 @@ func buildHTMLProps(groupedResults [][][]int, totals []int, sizes []int, operand
 					rollType = "med"
 				}
 				diceRoll := DiceRoll{
-					value:    roll,
-					rollType: rollType,
+					Value:    roll,
+					RollType: rollType,
 				}
 				diceRolls = append(diceRolls, diceRoll)
 			}
-			diceSet.rolls = append(diceSet.rolls, diceRolls...)
+			diceSet.Rolls = append(diceSet.Rolls, diceRolls...)
 		}
 		diceSets = append(diceSets, diceSet)
 	}
 	return RollResult{
-		sets:       diceSets,
-		operands:   operandSets,
-		grandtotal: grandTotal,
+		Sets:       diceSets,
+		Operands:   operandSets,
+		GrandTotal: grandTotal,
 	}
 }

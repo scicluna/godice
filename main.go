@@ -1,29 +1,33 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strings"
+	"net/http"
 
 	"godice/roller"
 )
 
 func main() {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Type your dice roll stirng (e.g. 2d6+1):")
+	// Serve CSS files
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("public/css"))))
 
-	diceString, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Println("Error reading input:", err)
-		return
-	}
+	// Serve HTML files
+	http.Handle("/", http.FileServer(http.Dir("public/html")))
 
-	result, err := roller.RollDiceString(strings.TrimSpace(diceString))
-	if err != nil {
-		fmt.Println("Error rolling dice:", err)
-		return
-	}
+	http.HandleFunc("/roll", func(w http.ResponseWriter, r *http.Request) {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+		diceString := r.FormValue("diceString")
+		result, err := roller.RollDiceString(diceString)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	fmt.Println("Result:", result)
+		fmt.Fprintf(w, "<div class='p-4 mt-4 bg-gray-100 rounded'>Grand Total: %d</div>", result.GrandTotal)
+	})
+
+	http.ListenAndServe(":8080", nil)
 }
