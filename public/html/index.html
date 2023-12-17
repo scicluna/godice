@@ -7,17 +7,27 @@
     <title>Dice Roller</title>
     <!-- Tailwind CSS Link -->
     <link rel="stylesheet" href="/css/styles.css">
-
+    <!-- HTMX Script -->
+    <script defer src="https://unpkg.com/htmx.org"></script>
 </head>
 
 <body>
-    <main class="h-screen flex bg-black">
-        <div class="sm:w-[30dvw] h-[80dvh] w-[60dvw] mx-auto my-auto bg-white bg-opacity-60 rounded-md">
-            wtfasdasdasdasd
+    <main class="h-screen flex bg-slate-300">
+        <div class="sm:w-[25dvw] h-[80dvh] w-[55dvw] mx-auto my-auto bg-slate-200 rounded-md overflow-hidden">
+            <div class="p-2 h-[93%]">
+                <ul id="resultslist">
+
+                </ul>
+            </div>
+            <form class="h-[7%] flex  bg-white">
+                <input class="p-4 h-full w-[90%]  bg-white" type="text"
+                    title="Invalid input. Please use only numbers, d, !, +, -, *, /, and spaces." required
+                    pattern="[0-9d\s\+\*\/\!\-]+" placeholder="4d6" />
+                <button class="h-full w-[10%] p-2" type="submit"><img src="/images/dice.svg"
+                        class="h-full w-full hover:animate-pulse" /></button>
+            </form>
         </div>
     </main>
-    <!-- HTMX Script -->
-    <script src="https://unpkg.com/htmx.org"></script>
 </body>
 
 </html>

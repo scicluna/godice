@@ -11,6 +11,9 @@ func main() {
 	// Serve CSS files
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("public/css"))))
 
+	// Serve images
+	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("public/images"))))
+
 	// Serve HTML files
 	http.Handle("/", http.FileServer(http.Dir("public/html")))
 
