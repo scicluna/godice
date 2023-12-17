@@ -489,6 +489,9 @@ video {
   --tw-backdrop-saturate:  ;
   --tw-backdrop-sepia:  ;
 }
+.m-4 {
+  margin: 1rem;
+}
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -496,6 +499,13 @@ video {
 .my-auto {
   margin-top: auto;
   margin-bottom: auto;
+}
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.mt-4 {
+  margin-top: 1rem;
 }
 .flex {
   display: flex;
@@ -515,6 +525,27 @@ video {
 .h-screen {
   height: 100vh;
 }
+.h-\[90\%\] {
+  height: 90%;
+}
+.h-96 {
+  height: 24rem;
+}
+.h-\[30vw\] {
+  height: 30vw;
+}
+.h-\[30vh\] {
+  height: 30vh;
+}
+.h-\[5vh\] {
+  height: 5vh;
+}
+.h-\[50vh\] {
+  height: 50vh;
+}
+.h-\[90vh\] {
+  height: 90vh;
+}
 .w-\[10\%\] {
   width: 10%;
 }
@@ -526,6 +557,30 @@ video {
 }
 .w-full {
   width: 100%;
+}
+.w-60 {
+  width: 15rem;
+}
+.w-\[20vw\] {
+  width: 20vw;
+}
+.w-\[80vw\] {
+  width: 80vw;
+}
+.list-none {
+  list-style-type: none;
+}
+.flex-col {
+  flex-direction: column;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
 }
 .overflow-hidden {
   overflow: hidden;
@@ -545,11 +600,37 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
+.bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+.bg-slate-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+}
+.bg-opacity-10 {
+  --tw-bg-opacity: 0.1;
+}
+.bg-opacity-30 {
+  --tw-bg-opacity: 0.3;
+}
 .p-2 {
   padding: 0.5rem;
 }
 .p-4 {
   padding: 1rem;
+}
+.p-1 {
+  padding: 0.25rem;
+}
+.outline {
+  outline-style: solid;
+}
+.outline-slate-800 {
+  outline-color: #1e293b;
+}
+.outline-slate-600 {
+  outline-color: #475569;
 }
 @keyframes pulse {
 
@@ -560,9 +641,36 @@ video {
 .hover\:animate-pulse:hover {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+.focus\:outline-0:focus {
+  outline-width: 0px;
+}
 @media (min-width: 640px) {
+
+  .sm\:h-\[50vh\] {
+    height: 50vh;
+  }
+
+  .sm\:h-\[60vh\] {
+    height: 60vh;
+  }
+
+  .sm\:h-\[65vh\] {
+    height: 65vh;
+  }
+
+  .sm\:h-\[75vh\] {
+    height: 75vh;
+  }
 
   .sm\:w-\[25dvw\] {
     width: 25dvw;
+  }
+
+  .sm\:w-\[20vw\] {
+    width: 20vw;
+  }
+
+  .sm\:w-96 {
+    width: 24rem;
   }
 }
