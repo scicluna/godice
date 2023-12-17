@@ -7,6 +7,7 @@
     <title>Dice Roller</title>
     <!-- Tailwind CSS Link -->
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/custom.css">
     <!-- HTMX Script -->
     <script defer src="https://unpkg.com/htmx.org"></script>
 </head>
@@ -19,15 +20,32 @@
 
                 </ul>
             </div>
-            <form class="sm:w-96 h-[5vh] w-[80vw] flex bg-white outline-slate-600 outline rounded-md">
+            <form class="sm:w-96 h-[5vh] w-[80vw] flex bg-white outline-slate-600 outline rounded-md" hx-post="/roll"
+                hx-target="#resultslist" hx-swap="beforeend">
                 <input class="w-full p-1 focus:outline-0" type="text"
                     title="Invalid input. Please use only numbers, d, !, +, -, *, /, and spaces." required
-                    pattern="[0-9d\s\+\*\/\!\-]+" placeholder="4d6" />
+                    pattern="[0-9d\s\+\*\/\!\-]+" placeholder="4d6" name="diceString" />
                 <button class="h-full" type="submit"><img src="/images/dice.svg"
                         class="h-full w-full hover:animate-pulse" /></button>
             </form>
         </div>
     </main>
+    <script>
+        function expandDice(element) {
+            const rollsContainer = element.nextElementSibling;
+            if (rollsContainer) {
+                rollsContainer.classList.toggle('hidden');
+            }
+            element.classList.toggle('hidden')
+        }
+        function collapseDice(element, i) {
+            if (element) {
+                element.classList.toggle('hidden');
+            }
+            let target = document.getElementById(i)
+            target.classList.toggle('hidden')
+        }
+    </script>
 </body>
 
 </html>

@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"godice/roller"
+
+	"github.com/google/uuid"
 )
 
 func main() {
@@ -29,7 +32,34 @@ func main() {
 			return
 		}
 
-		fmt.Fprintf(w, "<div class='p-4 mt-4 bg-gray-100 rounded'>Grand Total: %d</div>", result.GrandTotal)
+		// Build HTML response
+		var sb strings.Builder
+		sb.WriteString("<li class='flex flex gap-1 text-xl font-bold font-mono'>")
+
+		for i, set := range result.Sets {
+			newUUID := uuid.New().ID()
+			sb.WriteString(fmt.Sprintf("<div class='cursor-pointer' id='%d' onclick='expandDice(this)'>%d</div>", newUUID, set.Total))
+
+			sb.WriteString(fmt.Sprintf("<ul class='flex hidden cursor-pointer' onclick='collapseDice(this, %d)'>", newUUID))
+			for _, roll := range set.Rolls {
+				sb.WriteString(fmt.Sprintf("<li class='%s'>%d</li>", roll.RollType, roll.Value))
+			}
+			sb.WriteString("</ul>")
+
+			if i < len(result.Operands) && result.Operands[i] != "" {
+				sb.WriteString(fmt.Sprintf("<div>%s</div>", result.Operands[i]))
+			}
+
+			if i == len(result.Sets)-1 {
+				sb.WriteString(fmt.Sprintf("<div>%s</div>", "="))
+			}
+		}
+
+		// Append grand total
+		sb.WriteString(fmt.Sprintf("%d", result.GrandTotal))
+
+		sb.WriteString("</li>")
+		fmt.Fprint(w, sb.String())
 	})
 
 	http.ListenAndServe(":8080", nil)
