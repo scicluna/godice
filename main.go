@@ -2,15 +2,24 @@ package main
 
 import (
 	"fmt"
+	"godice/roller"
+	"html/template"
 	"net/http"
 	"strings"
 
-	"godice/roller"
+	_ "github.com/lib/pq"
 
 	"github.com/google/uuid"
 )
 
 func main() {
+	// Initialize the database connection
+	db := connectDB()
+	defer db.Close()
+
+	// Ensure the default profile exists
+	ensureDefaultProfileExists(db)
+
 	// Serve CSS files
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("public/css"))))
 
@@ -18,7 +27,35 @@ func main() {
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("public/images"))))
 
 	// Serve HTML files
-	http.Handle("/", http.FileServer(http.Dir("public/html")))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		results, err := getRollResultsForProfile(db, "Default")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		htmlContent := convertResultsToHTML(results)
+
+		// Parse the HTML template
+		tmpl, err := template.ParseFiles("public/html/index.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Execute the template with htmlContent
+		data := struct {
+			HtmlContent template.HTML
+		}{
+			HtmlContent: template.HTML(htmlContent),
+		}
+
+		err = tmpl.Execute(w, data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
 
 	http.HandleFunc("/roll", func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
@@ -29,6 +66,13 @@ func main() {
 		result, err := roller.RollDiceString(diceString)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Call the SaveRollResult function
+		saveerr := SaveRollResult(db, "Default", result)
+		if saveerr != nil {
+			http.Error(w, "Error saving roll result", http.StatusInternalServerError)
 			return
 		}
 
