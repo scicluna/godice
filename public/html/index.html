@@ -13,21 +13,34 @@
 </head>
 
 <body>
-    <main class="h-screen bg-slate-300 flex justify-center items-center">
-        <div class="flex flex-col justify-between items-center outline-slate-600 outline rounded-md overflow-hidden">
-            <div class="sm:h-[75vh] sm:w-96 h-[90vh] w-[80vw] bg-slate-800 bg-opacity-10 overflow-auto">
-                <ul id="resultslist" class="list-none p-2">
-                    {{.HtmlContent}}
-                </ul>
+    <main class="h-screen bg-slate-300">
+        <div class="h-full flex justify-center items-center gap-4">
+            <div class="flex flex-col gap-4">
+                <h1>Select Your Profile:</h1>
+                <select id="profileselect">
+                    Profiles
+                </select>
+                <form>
+                    <input type="text" placeholder="New Profile" />
+                    <button type="button">Add</button>
+                </form>
             </div>
-            <form class="sm:w-96 h-[5vh] w-[80vw] flex bg-white outline-slate-600 outline rounded-md" hx-post="/roll"
-                hx-target="#resultslist" hx-swap="beforeend">
-                <input class="w-full p-1 focus:outline-0" type="text"
-                    title="Invalid input. Please use only numbers, d, !, +, -, *, /, and spaces." required
-                    pattern="[0-9d\s\+\*\/\!\-]+" placeholder="4d6" name="diceString" />
-                <button class="h-full" type="submit"><img src="/images/dice.svg"
-                        class="h-full w-full hover:animate-pulse" /></button>
-            </form>
+            <div
+                class=" sm:h-[75vh] sm:w-96 h-[90vh] w-[80vw] flex flex-col justify-between items-center outline-slate-600 outline rounded-md overflow-hidden">
+                <div class=" bg-slate-800 bg-opacity-10 overflow-auto w-full h-full">
+                    <ul id="resultslist" class="list-none p-2">
+                        {{.HtmlContent}}
+                    </ul>
+                </div>
+                <form class="sm:w-96 h-[5vh] w-[80vw] flex bg-white outline-slate-600 outline rounded-md"
+                    hx-post="/roll" hx-target="#resultslist" hx-swap="beforeend">
+                    <input class="w-full p-1 focus:outline-0" type="text"
+                        title="Invalid input. Please use only numbers, d, !, +, -, *, /, and spaces." required
+                        pattern="[0-9d\s\+\*\/\!\-]+" placeholder="4d6" name="diceString" />
+                    <button class="h-full" type="submit"><img src="/images/dice.svg"
+                            class="h-full w-full hover:animate-pulse" /></button>
+                </form>
+            </div>
         </div>
     </main>
     <script>
