@@ -1,8 +1,8 @@
 module godice
 
-go 1.23
+go 1.18
 
 require (
-	github.com/google/uuid v1.5.0 // indirect
-	github.com/lib/pq v1.10.9 // indirect
+	github.com/google/uuid v1.5.0
+	github.com/lib/pq v1.10.9
 )

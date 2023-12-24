@@ -58,6 +58,36 @@ func ensureDefaultProfileExists(db *sql.DB) {
 	}
 }
 
+func getProfiles(db *sql.DB) ([]string, error) {
+
+	var profiles []string
+	// SQL query to get all current profiles
+	query := `
+            SELECT * FROM profiles;
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var profile string
+		if err := rows.Scan(&profile); err != nil {
+			return nil, err
+		}
+
+		profiles = append(profiles, profile)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return profiles, nil
+}
+
 func getDefaultProfileID(db *sql.DB) (int, error) {
 	var id int
 	query := `SELECT id FROM profiles WHERE name = 'Default';`
@@ -172,6 +202,26 @@ func convertResultsToHTML(results []roller.RollResult) string {
 
 		// Append the result's HTML to the main HTML builder
 		htmlBuilder.WriteString(sb.String())
+	}
+
+	return htmlBuilder.String()
+}
+
+func convertProfilesToHTML(profiles []string) string {
+	var htmlBuilder strings.Builder
+
+	for _, profile := range profiles {
+		// Build HTML response for each result
+		var sb strings.Builder
+		sb.WriteString("<option class='flex flex gap-1 text-xl font-bold font-mono'>")
+
+		sb.WriteString(fmt.Sprintf("%s", profile))
+
+		sb.WriteString("</option>")
+
+		// Append the result's HTML to the main HTML builder
+		htmlBuilder.WriteString(sb.String())
+
 	}
 
 	return htmlBuilder.String()

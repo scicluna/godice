@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dice Roller</title>
-    <!-- Tailwind CSS Link -->
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/custom.css">
-    <!-- HTMX Script -->
     <script defer src="https://unpkg.com/htmx.org"></script>
 </head>
 
@@ -18,11 +16,11 @@
             <div class="flex flex-col gap-4">
                 <h1>Select Your Profile:</h1>
                 <select id="profileselect">
-                    Profiles
+                    {{.Profiles}}
                 </select>
-                <form>
-                    <input type="text" placeholder="New Profile" />
-                    <button type="button">Add</button>
+                <form hx-post="/create-profile" hx-target="#profileselect" hx-swap="beforeend">
+                    <input type="text" placeholder="New Profile" name="profileName" />
+                    <button type="submit">Add</button>
                 </form>
             </div>
             <div

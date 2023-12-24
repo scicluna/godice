@@ -28,29 +28,39 @@ func main() {
 
 	// Serve HTML files
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		results, err := getRollResultsForProfile(db, "Default")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		profiles, profileErr := getProfiles(db)
+		if profileErr != nil {
+			http.Error(w, profileErr.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		htmlContent := convertResultsToHTML(results)
+		rollResults, rollErr := getRollResultsForProfile(db, "Default")
+		if rollErr != nil {
+			http.Error(w, rollErr.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		rollContent := convertResultsToHTML(rollResults)
+		profileContent := convertProfilesToHTML(profiles)
 
 		// Parse the HTML template
-		tmpl, err := template.ParseFiles("public/html/index.html")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		tmpl, tmplErr := template.ParseFiles("public/html/index.html")
+		if tmplErr != nil {
+			http.Error(w, tmplErr.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// Execute the template with htmlContent
 		data := struct {
 			HtmlContent template.HTML
+			Profiles    template.HTML
 		}{
-			HtmlContent: template.HTML(htmlContent),
+			HtmlContent: template.HTML(rollContent),
+			Profiles:    template.HTML(profileContent),
 		}
 
-		err = tmpl.Execute(w, data)
+		err := tmpl.Execute(w, data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
