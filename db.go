@@ -59,29 +59,30 @@ func ensureDefaultProfileExists(db *sql.DB) {
 }
 
 func getProfiles(db *sql.DB) ([]string, error) {
-
 	var profiles []string
-	// SQL query to get all current profiles
-	query := `
-            SELECT * FROM profiles;
-	`
+
+	query := "SELECT id, name FROM profiles;"
 
 	rows, err := db.Query(query)
 	if err != nil {
+		log.Printf("Error executing query '%s': %v\n", query, err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var profile string
-		if err := rows.Scan(&profile); err != nil {
+		var id int
+		var name string
+		if err := rows.Scan(&id, &name); err != nil {
+			log.Printf("Error scanning row for query '%s': %v\n", query, err)
 			return nil, err
 		}
-
-		profiles = append(profiles, profile)
+		profileInfo := fmt.Sprintf("%d: %s", id, name) // Combining id and name
+		profiles = append(profiles, profileInfo)
 	}
 
 	if err := rows.Err(); err != nil {
+		log.Printf("Error iterating rows for query '%s': %v\n", query, err)
 		return nil, err
 	}
 
@@ -93,6 +94,7 @@ func getDefaultProfileID(db *sql.DB) (int, error) {
 	query := `SELECT id FROM profiles WHERE name = 'Default';`
 	err := db.QueryRow(query).Scan(&id)
 	if err != nil {
+		log.Printf("Error iterating rows for defualtprofileid '%s': %v\n", query, err)
 		return 0, err
 	}
 	return id, nil
@@ -130,6 +132,8 @@ func getProfileID(db *sql.DB, profileName string) (int, error) {
 	query := `SELECT id FROM profiles WHERE name = $1;`
 	err := db.QueryRow(query, profileName).Scan(&id)
 	if err != nil {
+		log.Printf("Query: %s\n", query)
+		log.Printf("Scan error: %v\n", err)
 		return 0, err
 	}
 	return id, nil
@@ -150,11 +154,15 @@ func getRollResultsForProfile(db *sql.DB, profileName string) ([]roller.RollResu
 	for rows.Next() {
 		var rollData string
 		if err := rows.Scan(&rollData); err != nil {
+			log.Printf("Query: %s\n", query)
+			log.Printf("Scan error: %v\n", err)
 			return nil, err
 		}
 
 		var result roller.RollResult
 		if err := json.Unmarshal([]byte(rollData), &result); err != nil {
+			log.Printf("Query: %s\n", query)
+			log.Printf("Scan error: %v\n", err)
 			return nil, err
 		}
 

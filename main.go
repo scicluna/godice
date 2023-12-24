@@ -110,7 +110,7 @@ func main() {
 		}
 
 		// Append grand total
-		sb.WriteString(fmt.Sprintf("%d", result.GrandTotal))
+		sb.WriteString(fmt.Sprintf("<div>Total: %d</div>", result.GrandTotal))
 
 		sb.WriteString("</li>")
 		fmt.Fprint(w, sb.String())

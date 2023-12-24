@@ -26,4 +26,4 @@ RUN npm install
 RUN npm install -g postcss-cli
 
 # Set the command to run Air
-CMD ["air"]
+CMD ["sh", "-c", "ls -la /app && air"]
